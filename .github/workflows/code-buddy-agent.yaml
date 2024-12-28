@@ -1,0 +1,24 @@
+name: CodeBuddy CodeReview
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: LLM CodeReview
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          curl -v --location 'http://64.23.245.115:8080/v1/code-review-agent' \
+          --header 'Content-Type: application/json' \
+          --data "$(cat <<EOF
+          {
+            "owner": "${{ github.repository_owner }}",
+            "repository": "$REPO_NAME",
+            "pullRequestNumber": "${{ github.event.pull_request.number }}",
+            "githubToken": "${{ secrets.GH_TOKEN }}",
+            "codeBuddyKey": "${{ secrets.CODE_BUDDY_KEY }}"
+          }
+          EOF
+          )" --trace-ascii -
