@@ -62,4 +62,8 @@ public class EventService {
         fos.close();
         return convFile;
     }
+
+    public String helloWorld() {
+        return "HELLO";
+    }
 }
